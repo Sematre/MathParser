@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class MathParser {
 
 	private HashMap<String, MathFunction> functions = new HashMap<>();
-	private char argumentSeparator = ';';
+	private char argumentSeparator = ',';
 	private String equation = null;
 
 	private Integer position = -1;
