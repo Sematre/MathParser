@@ -1,4 +1,4 @@
-# TG-API
+# MathParser
 [![Release Version][release-image]][release-url]
 [![Maven Version][maven-image]][maven-url]
 [![Build Status][travis-image]][travis-url]
