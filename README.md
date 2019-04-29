@@ -66,7 +66,7 @@ System.out.println(mathParser.parse(equation));
 Gradle:
 ```gradle
 dependencies {
-	implementation 'de.sematre.mathparser:MathParser:1.0'
+	implementation 'de.sematre.mathparser:MathParser:1.1'
 }
 ```
 
@@ -75,11 +75,13 @@ Maven:
 <dependency>
 	<groupId>de.sematre.mathparser</groupId>
 	<artifactId>MathParser</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 </dependency>
 ```
 
 ## Release History
+* 1.1
+	* Code cleanup
 * 1.0
     * Initial version
 
