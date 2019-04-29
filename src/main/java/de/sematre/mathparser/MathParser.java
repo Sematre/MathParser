@@ -18,7 +18,7 @@ public class MathParser {
 	public MathParser() {}
 
 	public Double parse() {
-		if (equation == null || equation.length() <= 0) {
+		if (equation == null || equation.strip().length() <= 0) {
 			MathParsingExeption exeption = new MathParsingExeption("Equation is invalid!", "Equation is invalid!");
 			exeption.setEquation(equation);
 			throw exeption;
@@ -38,8 +38,26 @@ public class MathParser {
 		return parse();
 	}
 
+	private Double parseExpression() {
+		Double x = parseTerm();
+		while (true) {
+			if (parseChar('+')) x += parseTerm(); // addition
+			else if (parseChar('-')) x -= parseTerm(); // subtraction
+			else return x;
+		}
+	}
+
+	private Double parseTerm() {
+		Double x = parseFactor();
+		while (true) {
+			if (parseChar('*')) x *= parseFactor(); // multiplication
+			else if (parseChar('/')) x /= parseFactor(); // division
+			else return x;
+		}
+	}
+
 	private Double parseFactor() {
-		if (parseChar('+')) return parseFactor(); // unary plus
+		if (parseChar('+')) return +parseFactor(); // unary plus
 		if (parseChar('-')) return -parseFactor(); // unary minus
 
 		Integer startPos = position;
@@ -95,7 +113,7 @@ public class MathParser {
 				try {
 					x = parseFunction(func, startPos, args);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					throw createParsingExeption("Missing argument for function \"" + func + "\" at " + position, equation, startPos, func.length() == 1 ? startPos : startPos + func.length());
+					throw createParsingExeption("Missing argument for function \"" + func + "\" at " + startPos, equation, startPos, func.length() == 1 ? startPos : startPos + func.length());
 				}
 			}
 		} else throw createParsingExeption("Unexpected \"" + ((char) ch.intValue()) + "\" at " + (position + 1), equation, startPos);
@@ -104,24 +122,6 @@ public class MathParser {
 		if (parseChar('?')) x %= parseFactor(); // modulo
 		if (parseChar('%')) x /= 100D; // percent
 		return x;
-	}
-
-	private Double parseExpression() {
-		Double x = parseTerm();
-		while (true) {
-			if (parseChar('+')) x += parseTerm(); // addition
-			else if (parseChar('-')) x -= parseTerm(); // subtraction
-			else return x;
-		}
-	}
-
-	private Double parseTerm() {
-		Double x = parseFactor();
-		while (true) {
-			if (parseChar('*')) x *= parseFactor(); // multiplication
-			else if (parseChar('/')) x /= parseFactor(); // division
-			else return x;
-		}
 	}
 
 	private Double parseFunction(String function, Integer startPos, Double[] args) {
@@ -151,7 +151,7 @@ public class MathParser {
 				}
 			}
 
-			if (result == null) throw createParsingExeption("Unknown function: \"" + function + "\" at " + (startPos + 1), equation, startPos, startPos + (function.length() > 1 ? function.length() : 0));
+			if (result == null) throw createParsingExeption("Unknown function \"" + function + "\" at " + (startPos + 1), equation, startPos, startPos + (function.length() > 1 ? function.length() : 0));
 			x = result;
 		}
 
@@ -166,10 +166,10 @@ public class MathParser {
 		ch = (--position >= 0) ? equation.charAt(position) : -1;
 	}
 
-	private Boolean parseChar(int regex) {
+	private Boolean parseChar(int expectedChar) {
 		while (ch == ' ')
 			nextChar();
-		if (ch == regex) {
+		if (ch == expectedChar) {
 			nextChar();
 			return true;
 		} else return false;
@@ -211,7 +211,7 @@ public class MathParser {
 		return createParsingExeption(message, equation, position, position);
 	}
 
-	private static MathParsingExeption createParsingExeption(String message, String equation, Integer position, Integer target) {
+	public static MathParsingExeption createParsingExeption(String message, String equation, Integer position, Integer target) {
 		String errorReport = message + '\n' + equation + '\n';
 		for (Integer i = 0; i < position; i++) {
 			errorReport += ' ';
@@ -254,14 +254,6 @@ public class MathParser {
 
 		public MathParsingExeption(String message) {
 			super(message);
-		}
-
-		public MathParsingExeption(Throwable cause) {
-			super(cause);
-		}
-
-		public MathParsingExeption(String message, Throwable cause) {
-			super(message, cause);
 		}
 
 		public MathParsingExeption(String message, String errorReport) {
