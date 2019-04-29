@@ -18,7 +18,7 @@ public class MathParser {
 	public MathParser() {}
 
 	public Double parse() {
-		if (equation == null || equation.strip().length() <= 0) {
+		if (equation == null || equation.trim().length() <= 0) {
 			MathParsingExeption exeption = new MathParsingExeption("Equation is invalid!", "Equation is invalid!");
 			exeption.setEquation(equation);
 			throw exeption;
